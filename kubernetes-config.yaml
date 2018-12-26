@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reverse-ssh
+spec:
+  template:
+    spec:
+      containers:
+      - image: tifayuki/reverse-ssh-tunnel
+        name: reverse-ssh
+        env:
+        - name: PUBLIC_HOST_ADDR
+          value: ""
+        - name: PUBLIC_HOST_PORT
+          value: "22"
+        - name: PROXY_PORT
+          value: "2222"
+        - name: DESTINATION_PORT
+          value: "2222"
+        volumeMounts:
+        - name: gateway-private-key
+          mountPath: "/root/private_key"
+          readOnly: true
+      volumes:
+      - name: 
+        secret:
+          secretName: gateway-private-key
+
+        
