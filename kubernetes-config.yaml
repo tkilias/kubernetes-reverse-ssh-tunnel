@@ -1,3 +1,11 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gateway-private-key
+type: Opaque
+data:
+  key: 
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,7 +14,7 @@ spec:
   template:
     spec:
       containers:
-      - image: tifayuki/reverse-ssh-tunnel
+      - image: tkilias/kubernetes-reverse-ssh-tunnel
         name: reverse-ssh
         env:
         - name: PUBLIC_HOST_ADDR
