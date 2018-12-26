@@ -11,7 +11,13 @@ kind: Deployment
 metadata:
   name: reverse-ssh
 spec:
+  selector:
+    matchLabels:
+      app: gateway-private-key
   template:
+    metadata:
+      labels:
+        app: gateway-private-key
     spec:
       containers:
       - image: tkilias/kubernetes-reverse-ssh-tunnel
@@ -24,14 +30,15 @@ spec:
         - name: PROXY_PORT
           value: "2222"
         - name: DESTINATION_PORT
-          value: "2222"
+          value: "22"
         volumeMounts:
         - name: gateway-private-key
           mountPath: "/root/private_key"
           readOnly: true
       volumes:
-      - name: 
+      - name: gateway-private-key 
         secret:
           secretName: gateway-private-key
+          defaultMode: 256
 
         
