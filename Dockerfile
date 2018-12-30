@@ -19,12 +19,15 @@ RUN apt-get update && \
     sed -i "s/#?PubkeyAuthentication.*/PubkeyAuthentication yes/g" /etc/ssh/sshd_config && \
     sed -i "s/#?LogLevel.*/LogLevel VERBOSE/g" /etc/ssh/sshd_config && \
     sed -i "s/#?SyslogFacility.*/SyslogFacility AUTH/g" /etc/ssh/sshd_config && \
-    sed -i "s/#?SyslogFacility.*/SyslogFacility AUTH/g" /etc/ssh/sshd_config && \
     sed -i "s/#?AllowTcpForwarding.*/AllowTcpForwarding yes/g" /etc/ssh/sshd_config && \
     sed -i "s/#?AllowAgentForwarding.*/AllowAgentForwarding yes/g" /etc/ssh/sshd_config && \
     rm -rf /var/lib/apt/lists/*
 
-ADD bin/run.sh /run.sh
-RUN chmod +x /*.sh
+ADD bin/run.sh /root/run.sh
+ADD bin/ssh_agent.sh /root/ssh_agent.sh
+ADD bin/ssh_config /root/.ssh/config
 
-CMD ["/run.sh"]
+RUN chmod +x /root/*.sh && \
+    cat "bash /root/ssh_agent.sh" >> .profile
+
+CMD ["/root/run.sh"]
