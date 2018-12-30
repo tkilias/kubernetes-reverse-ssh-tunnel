@@ -2,7 +2,7 @@ FROM ubuntu:bionic
 
 RUN apt-get update && \
     apt-get -y -f install \
-    openssh-server autossh pwgen sshpass rsyslog && \
+    openssh-server autossh pwgen sshpass rsyslog vim htop && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists && \
     mkdir -p /var/run/sshd && \
