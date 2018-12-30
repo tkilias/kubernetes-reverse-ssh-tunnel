@@ -19,9 +19,4 @@ RUN apt-get update && \
 ADD bin/run.sh /run.sh
 RUN chmod +x /*.sh
 
-ENV PUBLIC_HOST_ADDR **None**
-ENV PUBLIC_HOST_PORT **None**
-ENV PROXY_PORT **None**
-ENV DESTINATION_PORT **None**
-
 CMD ["/run.sh"]

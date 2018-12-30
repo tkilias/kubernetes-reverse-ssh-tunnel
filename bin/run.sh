@@ -1,22 +1,16 @@
 #!/bin/bash
 
-if [ "${PUBLIC_HOST_ADDR}" == "**None**" ]; then
-    unset PUBLIC_HOST_ADDR
-fi
-
-if [ "${PUBLIC_HOST_PORT}" == "**None**" ]; then
-    unset PUBLIC_HOST_PORT
-fi
-
-if [ "${PROXY_PORT}" == "**None**" ]; then
-    unset PROXY_PORT
-fi
-
-if [ "${DESTINATION_PORT}" == "**None**" ]; then
-    unset DESTINATION_PORT
-fi
-
-if [[ -n "${PUBLIC_HOST_ADDR}" && -n "${PUBLIC_HOST_PORT}" ]]; then
+echo "PUBLIC_HOST_ADDR: ${PUBLIC_HOST_ADDR}"
+echo "PUBLIC_HOST_PORT: ${PUBLIC_HOST_PORT}"
+echo "PUBLIC_HOST_USER: ${PUBLIC_HOST_USER}"
+echo "PROXY_PORT: ${PROXY_PORT}"
+echo "DESTINATION_PORT: ${DESTINATION_PORT}"
+echo 
+if [[ -n "${PUBLIC_HOST_ADDR}" && \
+  -n "${PUBLIC_HOST_PORT}" && \
+  -n "${PUBLIC_HOST_USER}" && \
+  -n "${PROXY_PORT}" && \
+  -n "${DESTINATION_PORT}" ]]; then
 
     echo "=> Running in NATed host mode"
     if [ -z "${PROXY_PORT}" ]; then
@@ -45,12 +39,20 @@ if [[ -n "${PUBLIC_HOST_ADDR}" && -n "${PUBLIC_HOST_PORT}" ]]; then
     chmod 400 /root/.ssh/authorized_keys
 
     echo "=> Running rsyslog"
-    sudo service rsyslog restart
+    sudo service rsyslog start
 
     echo "=> Running in public host mode"
-    sudo service sshd restart 
+    sudo service ssh start 
 
     echo "=> Setting up the reverse ssh tunnel"
-    echo "ssh -NgR ${PROXY_PORT}:localhost:${DESTINATION_PORT} root@${PUBLIC_HOST_ADDR} -p ${PUBLIC_HOST_PORT} -i /root/private_key/key"
-    ssh -v -NgR ${PROXY_PORT}:localhost:${DESTINATION_PORT} ${PUBLIC_HOST_USER}@${PUBLIC_HOST_ADDR} -p ${PUBLIC_HOST_PORT} -i /root/private_key/key
+    if [[ "${AUTO_SSH}" == "yes" ]];
+    then
+      SSH_BIN="autossh -M0 "
+    else
+      SSH_BIN="ssh -v"
+    fi
+    echo "${SSH_BIN} -NgR ${PROXY_PORT}:localhost:${DESTINATION_PORT} root@${PUBLIC_HOST_ADDR} -p ${PUBLIC_HOST_PORT} -i /root/private_key/key"
+    ${SSH_BIN} -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -NgR ${PROXY_PORT}:localhost:${DESTINATION_PORT} ${PUBLIC_HOST_USER}@${PUBLIC_HOST_ADDR} -p ${PUBLIC_HOST_PORT} -i /root/private_key/key
+else
+  exit -1
 fi

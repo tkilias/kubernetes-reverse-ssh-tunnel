@@ -42,6 +42,8 @@ spec:
           value: "{{ PROXY_PORT | default('2222') }}"
         - name: DESTINATION_PORT
           value: "{{ DESTINATION_PORT | default('22') }}"
+        - name: AUTO_SSH
+          value: "{{ AUTO_SSH | default('yes') }}"
         volumeMounts:
         - name: gateway-private-key
           mountPath: "/root/private_key"
