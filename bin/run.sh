@@ -17,6 +17,9 @@ if [ "${DESTINATION_PORT}" == "**None**" ]; then
 fi
 
 if [[ -n "${PUBLIC_HOST_ADDR}" && -n "${PUBLIC_HOST_PORT}" ]]; then
+    echo "=> Running rsyslog"
+    sudo service rsyslog restart
+
     echo "=> Running in NATed host mode"
     if [ -z "${PROXY_PORT}" ]; then
         echo "PROXY_PORT needs to be specified!"
