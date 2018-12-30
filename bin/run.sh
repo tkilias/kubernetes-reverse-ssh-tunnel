@@ -55,6 +55,7 @@ if [[ -n "${PUBLIC_HOST_ADDR}" && \
     while true; do 
       echo "${SSH_BIN} -NgR ${PROXY_PORT}:localhost:${DESTINATION_PORT} root@${PUBLIC_HOST_ADDR} -p ${PUBLIC_HOST_PORT} -i /root/private_key/key"
       ${SSH_BIN} -o "ExitOnForwardFailure yes" -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -NgR ${PROXY_PORT}:localhost:${DESTINATION_PORT} ${PUBLIC_HOST_USER}@${PUBLIC_HOST_ADDR} -p ${PUBLIC_HOST_PORT} -i /root/private_key/key
+      sleep 1
     done
 else
   exit -1
