@@ -39,9 +39,13 @@ if [[ -n "${PUBLIC_HOST_ADDR}" && -n "${PUBLIC_HOST_PORT}" ]]; then
     cat ${KNOWN_HOSTS}
     echo "====REMOTE FINGERPRINT===="
 
+    echo "=> Setting up authorized_keys"
+    cp -f "/root/authorized_keys/keys" "/root/.ssh/authorized_keys"
+    chmod 400 /root/.ssh/authorized_keys
+
     echo "=> Setting up the reverse ssh tunnel"
     echo "autossh -f -M 0 -NgR ${PROXY_PORT}:localhost:${DESTINATION_PORT} root@${PUBLIC_HOST_ADDR} -p ${PUBLIC_HOST_PORT} -i /root/private_key/key"
-    autossh -f -M 0 -NgR ${PROXY_PORT}:localhost:${DESTINATION_PORT} root@${PUBLIC_HOST_ADDR} -p ${PUBLIC_HOST_PORT} -i /root/private_key/key
+    autossh -f -M 0 -NgR ${PROXY_PORT}:localhost:${DESTINATION_PORT} ${PUBLIC_HOST_USER}@${PUBLIC_HOST_ADDR} -p ${PUBLIC_HOST_PORT} -i /root/private_key/key
     echo "=> Running in public host mode"
     /usr/sbin/sshd -D
 fi

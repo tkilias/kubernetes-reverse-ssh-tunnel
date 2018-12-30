@@ -4,7 +4,15 @@ metadata:
   name: gateway-private-key
 type: Opaque
 data:
-  key: 
+  key: "{{ PRIVATE_KEY }}"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gateway-authorized-keys
+type: Opaque
+data:
+  keys: "{{ AUTHORIZED_KEYS }}"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -21,24 +29,34 @@ spec:
     spec:
       containers:
       - image: tkilias/kubernetes-reverse-ssh-tunnel
+        imagePullPolicy: Always
         name: reverse-ssh
         env:
         - name: PUBLIC_HOST_ADDR
-          value: ""
+          value: "{{ PUBLIC_HOST_ADDR }}"
         - name: PUBLIC_HOST_PORT
-          value: "22"
+          value: "{{ PUBLIC_HOST_PORT | default('22') }}"
+        - name: PUBLIC_HOST_USER
+          value: "{{ PUBLIC_HOST_USER | default('root') }}"
         - name: PROXY_PORT
-          value: "2222"
+          value: "{{ PROXY_PORT | default('2222') }}"
         - name: DESTINATION_PORT
-          value: "22"
+          value: "{{ DESTINATION_PORT | default('22') }}"
         volumeMounts:
         - name: gateway-private-key
           mountPath: "/root/private_key"
           readOnly: true
+        - name: gateway-authorized_keys
+          mountPath: "/root/authorized_keys"
+          readOnly: true
       volumes:
-      - name: gateway-private-key 
+      - name: gateway-private-key
         secret:
           secretName: gateway-private-key
+          defaultMode: 256
+      - name: gateway-authorized-keys 
+        secret:
+          secretName: gateway-authorized-keys
           defaultMode: 256
 
         
