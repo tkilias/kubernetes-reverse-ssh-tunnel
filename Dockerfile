@@ -2,7 +2,11 @@ FROM ubuntu:bionic
 
 RUN apt-get update && \
     apt-get -y -f install \
-    openssh-server autossh pwgen sshpass rsyslog vim htop && \
+    openssh-server autossh pwgen sshpass rsyslog vim htop curl gnupg apt-transport-https && \
+    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
+    echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list && \
+    apt-get update && \
+    apt-get install -y -f kubectl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists && \
     mkdir -p /var/run/sshd && \
