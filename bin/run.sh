@@ -39,10 +39,10 @@ if [[ -n "${PUBLIC_HOST_ADDR}" && \
     chmod 400 /root/.ssh/authorized_keys
 
     echo "=> Running rsyslog"
-    sudo service rsyslog start
+    service rsyslog start
 
     echo "=> Running in public host mode"
-    sudo service ssh start 
+    service ssh start 
 
     echo "=> Setting up the reverse ssh tunnel"
     if [[ "${AUTO_SSH}" == "yes" ]];
