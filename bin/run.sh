@@ -17,8 +17,6 @@ if [ "${DESTINATION_PORT}" == "**None**" ]; then
 fi
 
 if [[ -n "${PUBLIC_HOST_ADDR}" && -n "${PUBLIC_HOST_PORT}" ]]; then
-    echo "=> Running rsyslog"
-    sudo service rsyslog restart
 
     echo "=> Running in NATed host mode"
     if [ -z "${PROXY_PORT}" ]; then
@@ -46,9 +44,13 @@ if [[ -n "${PUBLIC_HOST_ADDR}" && -n "${PUBLIC_HOST_PORT}" ]]; then
     cp -f "/root/authorized_keys/keys" "/root/.ssh/authorized_keys"
     chmod 400 /root/.ssh/authorized_keys
 
-    echo "=> Setting up the reverse ssh tunnel"
-    echo "autossh -f -M 0 -NgR ${PROXY_PORT}:localhost:${DESTINATION_PORT} root@${PUBLIC_HOST_ADDR} -p ${PUBLIC_HOST_PORT} -i /root/private_key/key"
-    autossh -f -M 0 -NgR ${PROXY_PORT}:localhost:${DESTINATION_PORT} ${PUBLIC_HOST_USER}@${PUBLIC_HOST_ADDR} -p ${PUBLIC_HOST_PORT} -i /root/private_key/key
+    echo "=> Running rsyslog"
+    sudo service rsyslog restart
+
     echo "=> Running in public host mode"
-    /usr/sbin/sshd -D
+    sudo service sshd restart 
+
+    echo "=> Setting up the reverse ssh tunnel"
+    echo "ssh -NgR ${PROXY_PORT}:localhost:${DESTINATION_PORT} root@${PUBLIC_HOST_ADDR} -p ${PUBLIC_HOST_PORT} -i /root/private_key/key"
+    ssh -v -NgR ${PROXY_PORT}:localhost:${DESTINATION_PORT} ${PUBLIC_HOST_USER}@${PUBLIC_HOST_ADDR} -p ${PUBLIC_HOST_PORT} -i /root/private_key/key
 fi
