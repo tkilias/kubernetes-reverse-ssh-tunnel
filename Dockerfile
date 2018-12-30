@@ -1,4 +1,4 @@
-FROM ubuntu:trusty
+FROM ubuntu:bionic
 
 RUN apt-get update && \
     apt-get -y -f install \
